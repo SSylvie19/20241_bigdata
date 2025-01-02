@@ -1,0 +1,25 @@
+Transaction_unique_identifier,price,Date_of_Transfer,postcode,Property_Type,Old/New,Duration,PAON,SAON,Street,Locality,Town/City,District,County,PPDCategory_Type,Record_Status - monthly_file_only
+dc14a496-4ca5-4b19-9ad5-e566dd086144,1544911,2023-10-08,25310,Semi-Detached,Y,Freehold,13054,,Tanner Trail,fort,Lake Toddland,New Destinystad,Arizona,B,A
+7b539d39-782d-4ec4-9f14-ba6444b9638f,436193,2019-02-12,73122,Terraced,Y,Leasehold,8355,,Matthew Shores,town,West James,New Susanport,Mississippi,B,C
+75b19a00-9430-4267-b82e-86da44330440,1032402,2022-01-29,29043,Detached,N,Freehold,30218,,Clark Cliffs,land,Stephanieberg,Lake Michael,Pennsylvania,B,C
+066ee0e0-01fc-4bb6-8834-b28601377bcc,426873,2016-04-06,68867,Other,Y,Freehold,1543,,Johnson Cliff,fort,South Ashley,Lake Abigailborough,Vermont,B,A
+38f1f8b7-f46c-4b7b-8e43-ffd8026b85de,1439834,2022-02-01,14068,Terraced,N,Leasehold,062,,Ashley Course,port,Martinport,New Madison,Nebraska,A,A
+a947ebc7-2119-49c8-9333-b12fa49d186c,1660537,2021-08-19,03198,Detached,Y,Freehold,61764,,Jill Plains,berg,New Gabriela,Ashleymouth,Rhode Island,B,A
+c9506237-59f9-4b01-94d1-b2cb426bcf84,1000693,2016-04-15,27312,Detached,N,Leasehold,9781,,Lisa Ferry,ville,Velasquezport,New Christine,South Carolina,B,A
+6b0d0a76-74bf-4e94-929e-f987639e952b,159504,2018-09-15,01290,Flat/Maisonette,N,Leasehold,3739,,Rodriguez Ports,port,Cartershire,Stephenton,Arkansas,A,C
+2a760fba-fda9-434a-b968-cb7a23a2ea25,113527,2019-03-15,80330,Terraced,Y,Leasehold,9630,,Miller Curve,ville,Michaelville,North Sydney,Vermont,B,A
+786dd221-413c-41c9-a231-152f84ae1b3a,1741660,2017-03-17,99329,Detached,N,Leasehold,0823,,Ramirez Villages,ville,Ericborough,Michellefort,New Mexico,A,C
+68df039c-cca4-4aec-b4c5-c36012e42d95,301095,2019-02-04,08365,Other,Y,Freehold,88176,Suite 814,Cristina Hollow,ville,Port Sylviaside,Christinabury,Iowa,A,A
+a2c981a1-e32d-47c0-bf0e-2b583e64165d,931389,2016-05-17,21950,Flat/Maisonette,N,Leasehold,5289,,Sandra Valleys,ton,Port Mary,New Robertburgh,Utah,B,A
+58e822e3-d390-45bc-8c04-d92c7a7f4d95,763214,2022-11-18,41798,Terraced,Y,Leasehold,5159,,Joyce Roads,furt,Clementsbury,Kelseymouth,Oklahoma,B,A
+e5e2c7d1-1ade-4cde-b0df-59faffcb4cbe,694132,2021-02-04,41043,Detached,N,Leasehold,23602,,Hutchinson Squares,haven,Lake Lori,Joshuamouth,South Dakota,A,C
+411f1491-61a3-42d6-a8dd-d9b7f7d8fa99,462954,2017-05-25,68301,Other,Y,Leasehold,49023,,Susan Locks,town,Nathanshire,Brandonshire,New York,B,A
+0ae97917-4a3a-4e40-bc05-975ce736611f,680610,2015-06-08,42277,Detached,Y,Freehold,611,,Cynthia Key,berg,Lake Marktown,Clarkefurt,Alaska,A,A
+c4a41cc3-f0bc-420b-9368-61ffb06bdf33,1919178,2023-06-01,36753,Semi-Detached,N,Freehold,26691,,Anderson Vista,mouth,South Matthewfurt,Thomasfort,Louisiana,B,C
+9cf6dd5f-eb47-4713-a299-d449998877b5,87079,2022-08-07,68636,Other,Y,Freehold,6782,,Jason Crescent,chester,South Kevin,South Mirandafort,Alabama,B,A
+706929b1-f9c6-4634-847d-e3b4ffe13392,1297739,2019-04-07,74955,Terraced,N,Leasehold,37417,,Lee Common,town,Frostfort,West Joelside,Louisiana,B,A
+a4896d82-83bf-4e2c-87ea-0ae1566de41e,68879,2017-06-04,02913,Terraced,N,Freehold,273,,Phillip Estate,furt,Jeffreytown,Port Kristen,Michigan,B,C
+6df72cdc-550e-4ee8-aaa9-af496ee71f07,291817,2016-09-21,47815,Detached,N,Leasehold,85100,,Jeremy Locks,bury,Reynoldsville,North Alexandria,Delaware,B,A
+b17d26e6-073e-4b9c-9aec-22d51980cb75,368066,2020-08-18,55916,Semi-Detached,N,Leasehold,3298,,Jimenez Bridge,ville,Hartburgh,Charlesfort,Indiana,B,A
+973a99db-6d0d-4c43-bff0-1ed39e3ae637,1500281,2022-07-15,70723,Semi-Detached,Y,Freehold,6034,,Richard Land,land,Bobbystad,Fordshire,Florida,B,A
+1aadddf0-e2d7-4875-849f-aefcbb689636,1204332,2023-10-04,65911,Other,N,Leasehold,03248,,Mcgee Rue,ville,Deanstad,North Michael,Connecticut,A,A

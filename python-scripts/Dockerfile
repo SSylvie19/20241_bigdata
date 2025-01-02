@@ -34,7 +34,8 @@ RUN pip install --no-cache-dir \
     imbalanced-learn \
     xgboost \
     setuptools \
-    kafka-python-ng
+    kafka-python-ng \
+    faker
 
 
 

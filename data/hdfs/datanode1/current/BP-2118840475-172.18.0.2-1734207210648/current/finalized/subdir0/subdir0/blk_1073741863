@@ -1,0 +1,12 @@
+Transaction_unique_identifier,price,Date_of_Transfer,postcode,Property_Type,Old/New,Duration,PAON,SAON,Street,Locality,Town/City,District,County,PPDCategory_Type,Record_Status - monthly_file_only
+a591193d-734e-4e6e-af21-274537477e65,1949522,2015-11-01,42836,Flat/Maisonette,Y,Leasehold,45494,,Smith Hollow,mouth,Murrayton,East Meagan,New Jersey,A,C
+ddaa4b88-9c6d-4de2-9c20-0231bd962111,659993,2017-02-04,53432,Other,Y,Leasehold,23233,,Philip Bypass,shire,West Sabrina,New Linda,Florida,B,C
+380ef89c-9f56-4148-af7f-08b76a7631d8,1252183,2015-03-26,75254,Other,Y,Freehold,155,,Jacob Camp,land,Corymouth,Samuelville,Florida,A,A
+b46c2280-b1ea-4f4f-9765-371ee6228f9d,1341694,2019-07-25,73967,Flat/Maisonette,N,Leasehold,37919,Suite 512,Potter Roads,mouth,New Jessica,Lake John,Illinois,B,C
+d10c659f-55c7-4e36-a96d-a3c4636f2de1,1295588,2024-10-14,69927,Terraced,Y,Leasehold,372,,Wendy Trafficway,view,Ryanfort,Port Micheal,Wyoming,B,A
+376415f8-b930-4d77-ada7-05d7bc31290d,1782274,2016-08-22,54206,Other,N,Leasehold,168,,Pierce Stream,berg,Paigebury,Calvinville,Wisconsin,A,A
+8b02a729-7e39-4df5-8698-77915713864b,1178383,2015-10-15,94254,Flat/Maisonette,Y,Freehold,77420,Apt. 527,Wilkins Neck,bury,Lake John,Taylorfurt,Utah,A,A
+0c9babd3-f0a8-47a7-b65f-2c01ffbe70bc,1411763,2016-09-30,29390,Detached,Y,Leasehold,1458,,Perry Port,port,Priscillafurt,Port Matthewview,Kentucky,B,C
+0477de40-3b30-4d87-867a-b38ee1278a8f,1721480,2015-03-10,10208,Flat/Maisonette,Y,Freehold,0955,,Brown Circle,haven,Scottside,West Geraldmouth,South Carolina,A,C
+d8167439-a26c-4dcc-a170-b0db9f807b7a,330822,2019-03-10,05770,Flat/Maisonette,N,Freehold,4639,,Brian Pine,port,Whitneyport,East Alexander,New York,B,C
+aad1f21a-7019-45ba-95e1-d3c6132f8405,1099774,2015-11-17,92119,Semi-Detached,Y,Leasehold,863,Suite 199,Butler Ramp,mouth,Marybury,Chelseamouth,Tennessee,B,A
