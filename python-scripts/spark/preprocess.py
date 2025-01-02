@@ -53,13 +53,16 @@ duration_mapping = {
 def preprocess(raw_df):
     # Drop unnecessary columns
     columns_to_drop = [
-        'Transaction_unique_identifier',   'Street', 'Town/City',
+        'Transaction_unique_identifier', 'Street', 'Town/City',
         'Record_Status - monthly_file_only'
     ]
     df = raw_df.drop(*columns_to_drop)
     
+    # Convert 'Date_of_Transfer' column
+    df = df.withColumn('Date_of_Transfer', F.to_date(df['Date_of_Transfer']))
+
     # Map 'Property_Type' column
-    property_type_expr = when(lit(True), lit(None).cast(IntegerType()))
+    property_type_expr = F.when(F.lit(True), F.lit(None).cast(IntegerType()))
     for key, value in property_type_mapping.items():
         property_type_expr = property_type_expr.when(df['Property_Type'] == key, value)
     df = df.withColumn('Property_Type', property_type_expr)
@@ -71,17 +74,18 @@ def preprocess(raw_df):
     df = df.fillna({'postcode': 'UNKNOWN'})
 
     # Convert 'Old/New' column
-    df = df.withColumn('Old/New', when(df['Old/New'] == 'Y', 1).otherwise(0))
+    df = df.withColumn('Old/New', F.when(df['Old/New'] == 'Y', 1).otherwise(0))
 
     # Map 'Duration' column
-    duration_expr = when(lit(True), lit(None).cast(IntegerType()))
+    duration_expr = F.when(F.lit(True), F.lit(None).cast(IntegerType()))
     for key, value in duration_mapping.items():
         duration_expr = duration_expr.when(df['Duration'] == key, value)
     df = df.withColumn('Duration', duration_expr)
 
     # Convert 'PPDCategory_Type' column
-    df = df.withColumn('PPDCategory_Type', when(df['PPDCategory_Type'] == 'A', 1).otherwise(0))
+    df = df.withColumn('PPDCategory_Type', F.when(df['PPDCategory_Type'] == 'A', 1).otherwise(0))
 
+    # Fill missing values for all columns that may have NULLs
     df = df.fillna('UNKNOWN')
 
     return df
