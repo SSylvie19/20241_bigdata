@@ -1,0 +1,275 @@
+version: '3.8'
+
+services:
+  # Hadoop Services
+  namenode:
+    image: bde2020/hadoop-namenode:2.0.0-hadoop3.1.3-java8
+    container_name: namenode
+    hostname: namenode
+    environment:
+      - CLUSTER_NAME=hadoop-cluster
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
+      - HDFS_CONF_dfs_replication=1
+    ports:
+      - "9870:9870"    # HDFS Web UI
+      - "8020:8020"    # HDFS RPC port
+    volumes:
+      - ./data/hdfs/namenode:/hadoop/dfs/name
+    networks:
+      - hadoop-net
+
+  # DataNode 1 configuration
+  datanode1:
+    image: bde2020/hadoop-datanode:2.0.0-hadoop3.1.3-java8
+    container_name: datanode1
+    hostname: datanode1
+    environment:
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
+    ports:
+      - "9864:9864"    # HDFS DataNode Web UI port
+    volumes:
+      - ./data/hdfs/datanode1:/hadoop/dfs/data
+    depends_on:
+      - namenode
+    networks:
+      - hadoop-net
+
+  # DataNode 2 configuration
+  datanode2:
+    image: bde2020/hadoop-datanode:2.0.0-hadoop3.1.3-java8
+    container_name: datanode2
+    hostname: datanode2
+    environment:
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
+    ports:
+      - "9865:9864"    # HDFS DataNode Web UI port
+    volumes:
+      - ./data/hdfs/datanode2:/hadoop/dfs/data
+    depends_on:
+      - namenode
+    networks:
+      - hadoop-net
+
+  # DataNode 3 configuration
+  datanode3:
+    image: bde2020/hadoop-datanode:2.0.0-hadoop3.1.3-java8
+    container_name: datanode3
+    hostname: datanode3
+    environment:
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
+    ports:
+      - "9866:9864"    # HDFS DataNode Web UI port
+    volumes:
+      - ./data/hdfs/datanode3:/hadoop/dfs/data
+    depends_on:
+      - namenode
+    networks:
+      - hadoop-net
+
+  # HistoryServer configuration
+  historyserver:
+    image: bde2020/hadoop-historyserver:2.0.0-hadoop3.1.3-java8
+    container_name: historyserver
+    hostname: historyserver
+    environment:
+      - YARN_CONF_yarn_resourcemanager_address=resourcemanager:8032
+    ports:
+      - "8188:8188"    # HistoryServer Web UI
+    networks:
+      - hadoop-net
+    depends_on:
+      - resourcemanager
+
+  # ResourceManager configuration
+  resourcemanager:
+    image: bde2020/hadoop-resourcemanager:2.0.0-hadoop3.1.3-java8
+    container_name: resourcemanager
+    hostname: resourcemanager
+    environment:
+      - YARN_CONF_yarn_resourcemanager_hostname=resourcemanager
+    ports:
+      - "8088:8088"    # ResourceManager Web UI port
+    networks:
+      - hadoop-net
+  nodemanager1:
+    image: bde2020/hadoop-nodemanager:2.0.0-hadoop3.1.3-java8
+    container_name: nodemanager1
+    hostname: nodemanager1
+    environment:
+      - YARN_CONF_yarn_resourcemanager_address=resourcemanager:8032
+    ports:
+      - "8042:8042"    # NodeManager Web UI port
+    depends_on:
+      - resourcemanager
+    networks:
+      - hadoop-net
+
+  # Spark Services
+  spark-master:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: spark-master
+    hostname: masterhost
+    environment:
+      - SPARK_MODE=master
+      - SPARK_MASTER_HOST=spark-master
+    ports:
+      - "8080:8080"    # Spark Web UI
+      - "7077:7077"    # Spark master port
+    networks:
+      - hadoop-net
+
+  spark-worker-1:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: spark-worker-1
+    hostname: spark-worker-1
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+      - SPARK_WORKER_CORES=2
+      - SPARK_WORKER_MEMORY=1g
+    ports:
+      - "8081:8081"    # Spark worker Web UI
+    depends_on:
+      - spark-master
+    networks:
+      - hadoop-net
+
+  spark-worker-2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: spark-worker-2
+    hostname: spark-worker-2
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+      - SPARK_WORKER_CORES=2
+      - SPARK_WORKER_MEMORY=1g
+    ports:
+      - "8082:8081"    # Spark worker Web UI (different port to avoid conflict)
+    depends_on:
+      - spark-master
+    networks:
+      - hadoop-net
+
+  spark-worker-3:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: spark-worker-3
+    hostname: spark-worker-3
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+      - SPARK_WORKER_CORES=2
+      - SPARK_WORKER_MEMORY=1g
+    ports:
+      - "8083:8081"    # Spark worker Web UI (different port to avoid conflict)
+    depends_on:
+      - spark-master
+    networks:
+      - hadoop-net
+
+  # Kafka Services
+  zookeeper:
+    image: confluentinc/cp-zookeeper:6.2.0
+    container_name: zookeeper
+    networks:
+      - hadoop-net
+    ports:
+      - "2181:2181"    # Zookeeper client port
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  kafka:
+    image: confluentinc/cp-kafka:6.2.0
+    container_name: kafka
+    networks:
+      - hadoop-net
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"    # Kafka broker port
+      - "9101:9101"    # Kafka monitoring port
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ADVERTISED_HOST_NAME: kafka:9092
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+
+  kafdrop:
+    image: obsidiandynamics/kafdrop:3.27.0
+    container_name: kafdrop
+    networks:
+      - hadoop-net
+    depends_on:
+      - kafka
+      - zookeeper
+    ports:
+      - "19000:9000"   # Kafdrop UI port
+    environment:
+      KAFKA_BROKERCONNECT: kafka:29092
+
+  # Elasticsearch and Kibana
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.17.0
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=false
+    ports:
+      - "9200:9200"    # Elasticsearch port
+    networks:
+      - hadoop-net
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.17.0
+    container_name: kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - "5601:5601"    # Kibana UI port
+    depends_on:
+      - elasticsearch
+    networks:
+      - hadoop-net
+
+  # Python Service
+  python:
+    build:
+      context: .
+      dockerfile: ./python-scripts/Dockerfile  # Sử dụng Dockerfile để build image cho Python
+    container_name: python
+    hostname: python
+    volumes:
+      - ./python-scripts:/app  # Gắn thư mục code Python vào container
+    working_dir: /app
+    environment:
+      - HADOOP_NAMENODE_HOST=namenode
+      - SPARK_MASTER_HOST=spark-master
+      - KAFKA_BROKER_HOST=kafka:9092
+      - ELASTICSEARCH_HOST=http://elasticsearch:9200
+    command: tail -f /dev/null  # Giữ container chạy
+    depends_on:
+      - namenode
+      - spark-master
+      - kafka
+      - elasticsearch
+    networks:
+      - hadoop-net
+
+networks:
+  hadoop-net:
+    driver: bridge
+
+volumes:
+  hadoop-namenode:
+  hadoop-datanode:
