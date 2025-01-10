@@ -5,6 +5,9 @@ from pyspark.ml.feature import StringIndexer, OneHotEncoder, VectorAssembler, St
 from pyspark.ml import Pipeline
 from pyspark.ml.classification import LogisticRegression
 from pyspark.ml.evaluation import BinaryClassificationEvaluator
+from pyspark.sql import functions as F
+import subprocess
+import os
 
 
 spark = SparkSession.builder \
@@ -14,10 +17,13 @@ spark = SparkSession.builder \
     .config("spark.es.index.auto.create", "true") \
     .config("spark.jars.packages", "graphframes:graphframes:0.8.2-spark3.0-s_2.12") \
     .master("spark://spark-master:7077") \
+    .config("spark.hadoop.fs.defaultFS", "hdfs://namenode:8020") \
+    .config("spark.hadoop.fs.hdfs.impl", "org.apache.hadoop.hdfs.DistributedFileSystem") \
+    .config("spark.hadoop.fs.file.impl", "org.apache.hadoop.fs.LocalFileSystem") \
     .getOrCreate()
 
 
-hdfs_file_path = "hdfs://namenode:8020/upload/data.csv"
+hdfs_file_path = "hdfs://namenode:8020/upload_data/data.csv"
 
 # Gán tên cột nếu DataFrame không có header
 colnames = [
@@ -98,8 +104,27 @@ processed_df = preprocess(raw_df)
 
 # Hiển thị kết quả
 processed_df.show()
+print("Số lượng bản ghi:", processed_df.count())
 
-output_path = "hdfs://namenode:8020/process_data/processed_data.csv"
+output_path = "hdfs://namenode:8020/processed_data/process_data.csv"
+temp_output_path = "hdfs://namenode:8020/processed_data_temp"
 
-# Lưu DataFrame vào file CSV
-processed_df.write.mode("overwrite").option("header", "true").csv(output_path)
+
+#temp = "hdfs://namenode:8020/temp"
+# Lưu tạm thời
+processed_df.coalesce(1).write.mode("overwrite").option("header", "true").csv(temp_output_path)
+#processed_df.write.mode("overwrite").option("header", "true").csv(temp)
+
+
+# Tìm tệp CSV trong thư mục tạm thời
+hdfs = spark._jvm.org.apache.hadoop.fs.FileSystem.get(spark._jsc.hadoopConfiguration())
+path = spark._jvm.org.apache.hadoop.fs.Path(temp_output_path)
+status = hdfs.listStatus(path)
+print(status)
+
+# Di chuyển tệp từ thư mục tạm tới thư mục đích
+csv_file = [file.getPath().toString() for file in status if file.getPath().toString().endswith(".csv")][0]
+hdfs.rename(spark._jvm.org.apache.hadoop.fs.Path(csv_file), spark._jvm.org.apache.hadoop.fs.Path(output_path))
+
+
+hdfs.delete(path, True)

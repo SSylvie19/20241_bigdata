@@ -1,8 +1,7 @@
 import pandas as pd
 from elasticsearch import Elasticsearch
-from elasticsearch.helpers import bulk
-from hdfs import InsecureClient
 from elasticsearch.helpers import bulk, BulkIndexError
+from hdfs import InsecureClient
 
 # Kết nối Elasticsearch
 ELASTICSEARCH_HOST = "http://elasticsearch:9200"
@@ -11,7 +10,7 @@ INDEX_NAME = "real_estate_data"
 # Kết nối HDFS
 HDFS_URL = "http://namenode:9870"  # Thay bằng URL HDFS của bạn
 HDFS_USER = "root"  # Thay bằng user HDFS của bạn
-HDFS_FILE_PATH = "/user/data.csv"  # Đường dẫn file CSV trên HDFS
+HDFS_FILE_PATH = "/processed_data/process_data.csv"  # Đường dẫn file CSV trên HDFS
 
 def create_index(es, index_name):
     """Tạo index nếu chưa tồn tại"""
@@ -52,43 +51,35 @@ def create_index(es, index_name):
     except Exception as e:
         print(f"Error creating index: {e}")
 
-def csv_to_elasticsearch(file_path, es, index_name):
-    """Đọc file CSV và lưu vào Elasticsearch"""
-    with hdfs_client.read(HDFS_FILE_PATH, encoding='utf-8') as reader:
-    # Đọc nội dung của file
-        df = pd.read_csv(reader)
- 
-    # Chuẩn bị dữ liệu
-    def generate_data():
-        for _, row in df.iterrows():
-            yield {
-                "_index": index_name,
-                "_source": {
-                    "price": row["price"],
-                    "Date_of_Transfer": row["Date_of_Transfer"],
-                    "postcode": row["postcode"],
-                    "Property_Type": row["Property_Type"],
-                    "Old/New": row["Old/New"],
-                    "Duration": row["Duration"],
-                    "PAON": row["PAON"],
-                    "SAON": row["SAON"],
-                    "Locality": row["Locality"],
-                    "District": row["District"],
-                    "County": row["County"],
-                    "PPDCategory_Type": row["PPDCategory_Type"]
-                }
-            }
- 
-    # Gửi dữ liệu
-    try:
-        bulk(es, generate_data(), chunk_size=500)
-        print(f"Data successfully indexed into '{index_name}'.")
-    except BulkIndexError as e:
-        print(f"Failed to index data: {e.errors}")
+def clean_row(row):
+    """Xử lý giá trị NaN và chuyển đổi kiểu dữ liệu"""
+    for key, value in row.items():
+        if pd.isna(value):  # Kiểm tra nếu giá trị là NaN
+            row[key] = None  # Thay thế bằng None
+        elif isinstance(value, float) and value.is_integer():
+            row[key] = int(value)  # Chuyển đổi số thực thành số nguyên (nếu cần)
+    return row
+
+def csv_to_elasticsearch(file_path, es, index_name, chunk_size=10000):
+    """Đọc file CSV theo từng chunk và lưu vào Elasticsearch"""
+    with hdfs_client.read(file_path, encoding='utf-8') as reader:
+        for chunk in pd.read_csv(reader, chunksize=chunk_size):
+            def generate_data():
+                for _, row in chunk.iterrows():
+                    cleaned_row = clean_row(row.to_dict())  # Làm sạch dữ liệu
+                    yield {
+                        "_index": index_name,
+                        "_source": cleaned_row,
+                    }
+            try:
+                bulk(es, generate_data(), chunk_size=500)
+                print(f"Chunk indexed successfully into '{index_name}'.")
+            except BulkIndexError as e:
+                print(f"Failed to index chunk: {e.errors}")
 
 if __name__ == "__main__":
     # Kết nối Elasticsearch
-    es = Elasticsearch([ELASTICSEARCH_HOST], request_timeout = 60)
+    es = Elasticsearch([ELASTICSEARCH_HOST], request_timeout=60)
 
     # Kết nối HDFS
     hdfs_client = InsecureClient(HDFS_URL, user=HDFS_USER)
@@ -97,5 +88,4 @@ if __name__ == "__main__":
     create_index(es, INDEX_NAME)
 
     # Đọc dữ liệu từ HDFS và nhập vào Elasticsearch
-    while True:
-        csv_to_elasticsearch(HDFS_FILE_PATH, es, INDEX_NAME)
+    csv_to_elasticsearch(HDFS_FILE_PATH, es, INDEX_NAME)
